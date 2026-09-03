@@ -3,15 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gold & EUR/USD Institutional Dashboard</title>
+  <title>Multi-Asset Institutional Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
   <!-- Header -->
   <header class="p-4 bg-gray-800 border-b border-gray-700 flex justify-between items-center">
     <div class="flex items-center gap-3">
-      <h1 class="text-xl font-bold text-yellow-400">Institutional Dashboard</h1>
-      <span class="text-xs bg-yellow-900/60 text-yellow-300 px-2 py-1 rounded border border-yellow-700">Focus: XAUUSD & EURUSD</span>
+      <h1 class="text-xl font-bold text-yellow-400">Institutional Multi-Asset Dashboard</h1>
+      <span class="text-xs bg-yellow-900/60 text-yellow-300 px-2 py-1 rounded border border-yellow-700">
+        XAUUSD | EURUSD | NQ1! | QQQUSDT (Bybit)
+      </span>
     </div>
     <span class="text-xs bg-green-900 text-green-300 px-2 py-1 rounded">Status: En Vivo</span>
   </header>
@@ -19,10 +21,10 @@
   <!-- Main Layout Grid -->
   <main class="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 p-4">
     
-    <!-- Columna Izquierda: Gráficos y Feeds de Noticias (3 columnas) -->
+    <!-- Columna Izquierda: Gráfico Pro y Panel Forex Factory (3 columnas) -->
     <section class="lg:col-span-3 flex flex-col gap-4">
       
-      <!-- Gráfico Pro con XAUUSD y EURUSD en Watchlist -->
+      <!-- Gráfico Pro con Watchlist Especializada -->
       <div class="bg-gray-800 rounded-lg p-2 h-[550px] border border-gray-700">
         <div class="tradingview-widget-container" style="height:100%;width:100%">
           <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
@@ -40,12 +42,12 @@
             "allow_symbol_change": true,
             "save_image": true,
             "calendar": false,
-            "studies": [
-              "STD;Volume"
-            ],
+            "studies": ["STD;Volume"],
             "watchlist": [
               "OANDA:XAUUSD",
-              "OANDA:EURUSD"
+              "OANDA:EURUSD",
+              "CME_MINI:NQ1!",
+              "BYBIT:QQQUSDT"
             ],
             "support_host": "https://www.tradingview.com"
           }
@@ -53,29 +55,45 @@
         </div>
       </div>
 
-      <!-- Feed de Noticias Filtrado -->
-      <div class="bg-gray-800 rounded-lg p-2 h-[350px] border border-gray-700">
-        <div class="text-xs text-gray-400 mb-1 px-2 font-semibold">Noticias Macroeconómicas & Flujo Relevante (USD / EUR / Oro)</div>
-        <div class="tradingview-widget-container" style="height:100%;width:100%">
-          <div class="tradingview-widget-container__widget"></div>
-          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
-          {
-            "feedMode": "market",
-            "market": "forex",
-            "isTransparent": true,
-            "displayMode": "regular",
-            "width": "100%",
-            "height": "100%",
-            "colorTheme": "dark",
-            "locale": "es"
-          }
-          </script>
+      <!-- Módulo Forex Factory + Resumen Lateral -->
+      <div class="bg-gray-800 rounded-lg p-4 border border-gray-700 h-[380px] flex flex-col">
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-sm font-bold text-red-400 flex items-center gap-2">
+            <span>🔴 Noticias de Alto Impacto - Forex Factory Feed</span>
+          </h2>
+          <span class="text-[11px] text-gray-400">USD & EUR Focus</span>
+        </div>
+
+        <!-- Contenedor dividido: Lista de Noticias (Izquierda) + Resumen Detallado (Derecha) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 overflow-hidden">
+          
+          <!-- Lista de Eventos -->
+          <div id="ff-news-list" class="overflow-y-auto pr-2 space-y-2 text-xs divide-y divide-gray-700">
+            <div class="text-gray-400 p-2">Cargando noticias de Forex Factory...</div>
+          </div>
+
+          <!-- Panel de Resumen Lateral -->
+          <div id="ff-news-summary" class="bg-gray-900 rounded p-3 border border-gray-700 flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] text-yellow-400 font-semibold tracking-wider uppercase">Resumen de Noticia</span>
+              <h3 id="summary-title" class="text-sm font-bold text-white mt-1">Selecciona una noticia</h3>
+              <p id="summary-date" class="text-[11px] text-gray-400 mt-1"></p>
+              <div id="summary-body" class="text-xs text-gray-300 mt-3 leading-relaxed overflow-y-auto max-h-[160px]">
+                Haz clic en cualquier evento de la lista para ver el desglose técnico y su impacto en XAUUSD, EURUSD, NQ y QQQUSDT.
+              </div>
+            </div>
+            <div class="mt-4 pt-2 border-t border-gray-800 flex justify-between text-[11px] text-gray-400">
+              <span>Impacto Macro: <strong id="summary-impact" class="text-gray-200">-</strong></span>
+              <span>Moneda / Región: <strong id="summary-currency" class="text-gray-200">-</strong></span>
+            </div>
+          </div>
+
         </div>
       </div>
 
     </section>
 
-    <!-- Columna Derecha: Calendario Filtrado + Recursos de GEX / Gamma (1 columna) -->
+    <!-- Columna Derecha: Recursos GEX y Calendario (1 columna) -->
     <section class="flex flex-col gap-4">
       
       <!-- Panel de Recursos Gamma Exposure (GEX) y Opciones -->
@@ -84,27 +102,25 @@
           <span> Gamma / GEX Resources</span>
           <span class="text-[10px] bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded">Opciones</span>
         </h2>
-        <p class="text-xs text-gray-400 mb-3">Servicios y herramientas para analizar niveles de Gamma y exposición del Market Maker:</p>
-        
         <div class="flex flex-col gap-2 text-xs">
           <a href="https://squeezemetrics.com/monitor/gex" target="_blank" class="p-2 bg-gray-900 hover:bg-gray-700 rounded border border-gray-700 transition flex justify-between items-center">
             <span class="font-medium text-blue-300">SqueezeMetrics (GEX)</span>
-            <span class="text-[10px] text-gray-400">Ver gratis ↗</span>
+            <span class="text-[10px] text-gray-400">Ver ↗</span>
           </a>
           <a href="https://spotgamma.com/" target="_blank" class="p-2 bg-gray-900 hover:bg-gray-700 rounded border border-gray-700 transition flex justify-between items-center">
-            <span class="font-medium text-yellow-300">SpotGamma</span>
-            <span class="text-[10px] text-gray-400">Análisis Nivel Pro ↗</span>
+            <span class="font-medium text-yellow-300">SpotGamma (NQ / QQQ)</span>
+            <span class="text-[10px] text-gray-400">Niveles ↗</span>
           </a>
-          <a href="https://www.barchart.com/futures/options" target="_blank" class="p-2 bg-gray-900 hover:bg-gray-700 rounded border border-gray-700 transition flex justify-between items-center">
-            <span class="font-medium text-green-300">Barchart Options (GC/6E)</span>
+          <a href="https://www.barchart.com/etfs-in-focus/QQQ/options" target="_blank" class="p-2 bg-gray-900 hover:bg-gray-700 rounded border border-gray-700 transition flex justify-between items-center">
+            <span class="font-medium text-green-300">Barchart QQQ Options</span>
             <span class="text-[10px] text-gray-400">Open Interest ↗</span>
           </a>
         </div>
       </div>
 
-      <!-- Calendario Económico Filtrado solo a USD y EUR (Afecta directamente a Oro y EURUSD) -->
+      <!-- Calendario Económico Filtrado a USD y EUR -->
       <div class="bg-gray-800 rounded-lg p-2 flex-1 min-h-[480px] border border-gray-700">
-        <div class="text-xs text-gray-400 mb-1 px-2 font-semibold">Eventos Macro (Solo USD & EUR)</div>
+        <div class="text-xs text-gray-400 mb-1 px-2 font-semibold">Eventos Clave (USD & EUR)</div>
         <div class="tradingview-widget-container" style="height:100%;width:100%">
           <div class="tradingview-widget-container__widget"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
@@ -123,5 +139,60 @@
 
     </section>
   </main>
+
+  <!-- Script para consumir RSS de Forex Factory y renderizar el Resumen -->
+  <script>
+    const rssUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.forexfactory.com%2Fnews.xml';
+
+    async function fetchForexFactoryNews() {
+      const newsListContainer = document.getElementById('ff-news-list');
+      try {
+        const response = await fetch(rssUrl);
+        const data = await response.json();
+
+        if (data.status === 'ok' && data.items.length > 0) {
+          newsListContainer.innerHTML = '';
+          
+          data.items.forEach((item, index) => {
+            const newsCard = document.createElement('div');
+            newsCard.className = 'pt-2 cursor-pointer hover:bg-gray-700/50 p-2 rounded transition border-l-2 border-transparent hover:border-yellow-400';
+            
+            newsCard.innerHTML = `
+              <div class="flex justify-between items-start gap-2">
+                <span class="font-semibold text-gray-200 hover:text-yellow-400 line-clamp-1">${item.title}</span>
+                <span class="text-[10px] text-gray-400 whitespace-nowrap">${new Date(item.pubDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+              </div>
+            `;
+
+            newsCard.addEventListener('click', () => showNewsSummary(item));
+            newsListContainer.appendChild(newsCard);
+
+            // Mostrar la primera noticia por defecto
+            if (index === 0) showNewsSummary(item);
+          });
+        } else {
+          newsListContainer.innerHTML = '<div class="text-gray-400 p-2">No se pudieron cargar las noticias de Forex Factory.</div>';
+        }
+      } catch (error) {
+        newsListContainer.innerHTML = '<div class="text-red-400 p-2">Error al conectar con Forex Factory.</div>';
+      }
+    }
+
+    function showNewsSummary(item) {
+      document.getElementById('summary-title').innerText = item.title;
+      document.getElementById('summary-date').innerText = new Date(item.pubDate).toLocaleString();
+      
+      const cleanDescription = item.description ? item.description.replace(/<[^>]*>?/gm, '') : 'Sin detalles adicionales disponibles para este titular.';
+      document.getElementById('summary-body').innerText = cleanDescription;
+      
+      const isUSD = item.title.includes('USD') || item.title.includes('Fed') || item.title.includes('Dollar') || item.title.includes('FOMC') || item.title.includes('CPI');
+      const isEUR = item.title.includes('EUR') || item.title.includes('ECB') || item.title.includes('Euro');
+      
+      document.getElementById('summary-currency').innerText = isUSD ? 'USD (Afecta XAU, NQ, QQQ, EURUSD)' : (isEUR ? 'EUR' : 'GLOBAL');
+      document.getElementById('summary-impact').innerText = 'ALTO / MEDIO';
+    }
+
+    fetchForexFactoryNews();
+  </script>
 </body>
 </html>
