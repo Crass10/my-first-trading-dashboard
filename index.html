@@ -15,23 +15,66 @@
 
   <!-- Main Layout Grid -->
   <main class="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 p-4">
-    <!-- Columna Izquierda: Gráfico Principal (3 columnas) -->
+    <!-- Columna Izquierda: Gráfico y Noticias (3 columnas) -->
     <section class="lg:col-span-3 flex flex-col gap-4">
-      <div id="chart-widget" class="bg-gray-800 rounded-lg p-2 h-[500px]">
-        <!-- Widget de Gráfico -->
+      <div class="bg-gray-800 rounded-lg p-2 h-[500px]">
+        <!-- Widget Gráfico -->
+        <div class="tradingview-widget-container" style="height:100%;width:100%">
+          <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+          {
+            "autosize": true,
+            "symbol": "FX:EURUSD",
+            "interval": "D",
+            "timezone": "Etc/UTC",
+            "theme": "dark",
+            "style": "1",
+            "locale": "es",
+            "allow_symbol_change": true,
+            "calendar": false,
+            "support_host": "https://www.tradingview.com"
+          }
+          </script>
+        </div>
       </div>
-      <div id="news-widget" class="bg-gray-800 rounded-lg p-2 h-[350px]">
-        <!-- Widget de Noticias -->
+
+      <div class="bg-gray-800 rounded-lg p-2 h-[350px]">
+        <!-- Widget Noticias -->
+        <div class="tradingview-widget-container" style="height:100%;width:100%">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+          {
+            "feedMode": "all_symbols",
+            "isTransparent": true,
+            "displayMode": "regular",
+            "width": "100%",
+            "height": "100%",
+            "colorTheme": "dark",
+            "locale": "es"
+          }
+          </script>
+        </div>
       </div>
     </section>
 
-    <!-- Columna Derecha: Tickers y Calendario (1 columna) -->
+    <!-- Columna Derecha: Calendario Económico (1 columna) -->
     <section class="flex flex-col gap-4">
-      <div id="watchlist-widget" class="bg-gray-800 rounded-lg p-2 h-[420px]">
-        <!-- Widget Watchlist -->
-      </div>
-      <div id="calendar-widget" class="bg-gray-800 rounded-lg p-2 h-[430px]">
-        <!-- Widget Calendario Económico -->
+      <div class="bg-gray-800 rounded-lg p-2 h-[866px]">
+        <!-- Widget Calendario -->
+        <div class="tradingview-widget-container" style="height:100%;width:100%">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+          {
+            "colorTheme": "dark",
+            "isTransparent": true,
+            "width": "100%",
+            "height": "100%",
+            "locale": "es",
+            "importanceFilter": "-1,0,1",
+            "currencyFilter": "USD,EUR,GBP,JPY"
+          }
+          </script>
+        </div>
       </div>
     </section>
   </main>
