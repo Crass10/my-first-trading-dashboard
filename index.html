@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Open Source Trading Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Library Open Source: TradingView Lightweight Charts -->
-  <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
   <style>
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #1f2937; }
@@ -23,34 +21,34 @@
         <span>⚡ Open Source Multi-Asset Dashboard</span>
       </h1>
       <span class="text-xs bg-gray-700 text-gray-300 px-2 py-0.5 rounded border border-gray-600">
-        Standalone Engine (Canvas Rendered)
+        Live Public Market Data
       </span>
     </div>
     
     <div class="flex items-center gap-2 text-xs">
-      <button onclick="changeAsset('XAUUSD')" id="btn-XAUUSD" class="px-3 py-1 bg-yellow-600 font-bold text-black rounded transition">XAUUSD</button>
-      <button onclick="changeAsset('EURUSD')" id="btn-EURUSD" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded transition">EURUSD</button>
-      <button onclick="changeAsset('NASDAQ')" id="btn-NASDAQ" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded transition">NQ / QQQ</button>
+      <button onclick="changeSymbol('OANDA:XAUUSD')" id="btn-XAUUSD" class="px-3 py-1 bg-yellow-600 font-bold text-black rounded transition">XAUUSD</button>
+      <button onclick="changeSymbol('OANDA:EURUSD')" id="btn-EURUSD" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded transition">EURUSD</button>
+      <button onclick="changeSymbol('CME_MINI:NQ1!')" id="btn-NASDAQ" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded transition">NQ / QQQ</button>
     </div>
   </header>
 
   <!-- Main Layout Grid -->
   <main class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 p-4">
     
-    <!-- Columna Principal: Gráfico Open Source (2 columnas) -->
+    <!-- Columna Principal: Gráfico Interactivo en Vivo (2 columnas) -->
     <section class="lg:col-span-2 flex flex-col gap-4">
       
-      <!-- Contenedor del Gráfico Canvas -->
-      <div class="bg-gray-800 rounded-lg p-3 h-[500px] border border-gray-700 flex flex-col relative">
-        <div class="flex justify-between items-center mb-2 pb-2 border-b border-gray-700 text-xs">
-          <span id="chart-title" class="font-bold text-yellow-400">XAUUSD - Live Open Source Canvas Chart</span>
-          <div class="flex gap-2">
-            <span class="text-gray-400">Timeframe: <strong class="text-white">1H</strong></span>
-          </div>
+      <!-- Contenedor del Gráfico en Vivo -->
+      <div class="bg-gray-800 rounded-lg p-2 h-[550px] border border-gray-700 flex flex-col relative">
+        <div class="flex justify-between items-center mb-2 pb-2 border-b border-gray-700 text-xs px-2">
+          <span id="chart-title" class="font-bold text-yellow-400">XAUUSD - Live Technical Chart</span>
+          <span class="text-gray-400">Timeframe: <strong class="text-white">1H</strong></span>
         </div>
         
-        <!-- Render del Canvas con Lightweight Charts -->
-        <div id="open-source-chart" class="flex-1 w-full h-full rounded"></div>
+        <!-- Contenedor dinámico del widget de TradingView -->
+        <div id="tradingview-widget-container" class="flex-1 w-full h-full rounded overflow-hidden">
+          <!-- El script renderizará el gráfico aquí -->
+        </div>
       </div>
 
     </section>
@@ -59,7 +57,7 @@
     <section class="flex flex-col gap-4">
       
       <!-- Módulo Economic Calendar -->
-      <div class="bg-gray-800 rounded-lg p-4 border border-gray-700 h-[500px] flex flex-col">
+      <div class="bg-gray-800 rounded-lg p-4 border border-gray-700 h-[550px] flex flex-col">
         
         <div class="flex flex-wrap justify-between items-center gap-2 mb-3 pb-2 border-b border-gray-700">
           <div class="flex items-center gap-2">
@@ -106,103 +104,69 @@
   </main>
 
   <script>
-    let chart, candleSeries, volumeSeries;
-    let currentAsset = 'XAUUSD';
+    let currentSymbol = 'OANDA:XAUUSD';
     let allEvents = [];
     let currentFilterMode = 'month';
 
-    // Inicializar Gráfico Lightweight Open Source
-    function initChart() {
-      const container = document.getElementById('open-source-chart');
+    // Cargar Gráfico en Vivo
+    function loadChartWidget(symbol) {
+      const container = document.getElementById('tradingview-widget-container');
+      container.innerHTML = ''; // Limpiar contenedor previo
+
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+      script.async = true;
+      script.text = JSON.stringify({
+        "autosize": true,
+        "symbol": symbol,
+        "interval": "60",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "es",
+        "enable_publishing": false,
+        "hide_top_toolbar": false,
+        "allow_symbol_change": true,
+        "save_image": false,
+        "calendar": true,
+        "hide_volume": false,
+        "studies": [
+          "STD;Volume"
+        ],
+        "support_host": "https://www.tradingview.com"
+      });
+
+      container.appendChild(script);
+    }
+
+    function changeSymbol(symbol) {
+      currentSymbol = symbol;
       
-      chart = LightweightCharts.createChart(container, {
-        width: container.clientWidth,
-        height: container.clientHeight,
-        layout: {
-          backgroundColor: '#111827',
-          textColor: '#D1D5DB',
-        },
-        grid: {
-          vertLines: { color: '#1F2937' },
-          horzLines: { color: '#1F2937' },
-        },
-        crosshair: {
-          mode: LightweightCharts.CrosshairMode.Normal,
-        },
-        priceScale: {
-          borderColor: '#374151',
-        },
-        timeScale: {
-          borderColor: '#374151',
-          timeVisible: true,
-        },
-      });
+      const names = {
+        'OANDA:XAUUSD': 'XAUUSD',
+        'OANDA:EURUSD': 'EURUSD',
+        'CME_MINI:NQ1!': 'NASDAQ (NQ1!)'
+      };
 
-      candleSeries = chart.addCandlestickSeries({
-        upColor: '#10B981',
-        downColor: '#EF4444',
-        borderDownColor: '#EF4444',
-        borderUpColor: '#10B981',
-        wickDownColor: '#EF4444',
-        wickUpColor: '#10B981',
-      });
+      document.getElementById('chart-title').innerText = `${names[symbol]} - Live Technical Chart`;
 
-      volumeSeries = chart.addHistogramSeries({
-        color: '#26a69a',
-        priceFormat: { type: 'volume' },
-        priceScaleId: '',
-        scaleMargins: { top: 0.8, bottom: 0 },
-      });
+      const btns = {
+        'OANDA:XAUUSD': 'btn-XAUUSD',
+        'OANDA:EURUSD': 'btn-EURUSD',
+        'CME_MINI:NQ1!': 'btn-NASDAQ'
+      };
 
-      loadSampleData(currentAsset);
-
-      window.addEventListener('resize', () => {
-        chart.applyOptions({ width: container.clientWidth, height: container.clientHeight });
-      });
-    }
-
-    // Generar o Cargar Datos Simulados para el Gráfico
-    function loadSampleData(asset) {
-      document.getElementById('chart-title').innerText = `${asset} - Live Open Source Canvas Chart`;
-
-      let basePrice = asset === 'XAUUSD' ? 2400 : (asset === 'EURUSD' ? 1.0850 : 19500);
-      let data = [];
-      let volumeData = [];
-      let now = new Date();
-      now.setDate(now.getDate() - 30);
-
-      for (let i = 0; i < 100; i++) {
-        let open = basePrice + (Math.random() - 0.48) * (basePrice * 0.005);
-        let high = open + Math.random() * (basePrice * 0.003);
-        let low = open - Math.random() * (basePrice * 0.003);
-        let close = (high + low) / 2;
-        let time = Math.floor(now.getTime() / 1000) + (i * 86400);
-
-        data.push({ time, open, high, low, close });
-        volumeData.push({
-          time,
-          value: Math.floor(Math.random() * 1000) + 100,
-          color: close >= open ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)'
-        });
-
-        basePrice = close;
-      }
-
-      candleSeries.setData(data);
-      volumeSeries.setData(volumeData);
-    }
-
-    function changeAsset(asset) {
-      currentAsset = asset;
-      ['XAUUSD', 'EURUSD', 'NASDAQ'].forEach(a => {
-        const btn = document.getElementById(`btn-${a}`);
-        if (a === asset) {
+      Object.keys(btns).forEach(key => {
+        const btn = document.getElementById(btns[key]);
+        if (key === symbol) {
           btn.className = 'px-3 py-1 bg-yellow-600 font-bold text-black rounded transition';
         } else {
           btn.className = 'px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded transition';
         }
       });
-      loadSampleData(asset);
+
+      loadChartWidget(symbol);
     }
 
     // Lógica Calendario
@@ -213,7 +177,7 @@
         allEvents = await response.json();
         applyFilters();
       } catch (error) {
-        tbody.innerHTML = '<tr><td colspan="4" class="p-2 text-center text-red-400">Error al cargar el feed.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="p-2 text-center text-red-400">Error al cargar datos.</td></tr>';
       }
     }
 
@@ -283,7 +247,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      initChart();
+      loadChartWidget(currentSymbol);
       loadCalendarData();
     });
   </script>
