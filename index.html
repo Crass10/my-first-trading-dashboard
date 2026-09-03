@@ -15,23 +15,36 @@
 
   <!-- Main Layout Grid -->
   <main class="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 p-4">
-    <!-- Columna Izquierda: Gráfico y Noticias (3 columnas) -->
+    <!-- Columna Izquierda: Gráfico Pro y Noticias (3 columnas) -->
     <section class="lg:col-span-3 flex flex-col gap-4">
-      <div class="bg-gray-800 rounded-lg p-2 h-[500px]">
-        <!-- Widget Gráfico -->
+      <div class="bg-gray-800 rounded-lg p-2 h-[550px]">
+        <!-- Widget Gráfico Avanzado con Watchlist Integrada -->
         <div class="tradingview-widget-container" style="height:100%;width:100%">
           <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
           {
             "autosize": true,
-            "symbol": "FX:EURUSD",
-            "interval": "D",
+            "symbol": "OANDA:EURUSD",
+            "interval": "60",
             "timezone": "Etc/UTC",
             "theme": "dark",
             "style": "1",
             "locale": "es",
+            "enable_publishing": false,
+            "hide_top_toolbar": false,
             "allow_symbol_change": true,
+            "save_image": true,
             "calendar": false,
+            "studies": [
+              "STD;Volume"
+            ],
+            "watchlist": [
+              "OANDA:EURUSD",
+              "OANDA:GBPUSD",
+              "OANDA:GBPJPY",
+              "OANDA:XAUUSD",
+              "BINANCE:BTCUSDT"
+            ],
             "support_host": "https://www.tradingview.com"
           }
           </script>
@@ -39,7 +52,7 @@
       </div>
 
       <div class="bg-gray-800 rounded-lg p-2 h-[350px]">
-        <!-- Widget Noticias -->
+        <!-- Widget Noticias en Tiempo Real -->
         <div class="tradingview-widget-container" style="height:100%;width:100%">
           <div class="tradingview-widget-container__widget"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
@@ -57,10 +70,10 @@
       </div>
     </section>
 
-    <!-- Columna Derecha: Calendario Económico (1 columna) -->
+    <!-- Columna Derecha: Calendario Económico Personalizado (1 columna) -->
     <section class="flex flex-col gap-4">
-      <div class="bg-gray-800 rounded-lg p-2 h-[866px]">
-        <!-- Widget Calendario -->
+      <div class="bg-gray-800 rounded-lg p-2 h-[916px]">
+        <!-- Widget Calendario Filtrado por Divisas clave -->
         <div class="tradingview-widget-container" style="height:100%;width:100%">
           <div class="tradingview-widget-container__widget"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
@@ -70,7 +83,7 @@
             "width": "100%",
             "height": "100%",
             "locale": "es",
-            "importanceFilter": "-1,0,1",
+            "importanceFilter": "0,1",
             "currencyFilter": "USD,EUR,GBP,JPY"
           }
           </script>
