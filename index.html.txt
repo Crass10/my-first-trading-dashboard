@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pro Trading Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="p-4 bg-gray-800 border-b border-gray-700 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-green-400">Live Trading Dashboard</h1>
+    <span class="text-xs bg-green-900 text-green-300 px-2 py-1 rounded">Status: En Vivo</span>
+  </header>
+
+  <!-- Main Layout Grid -->
+  <main class="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 p-4">
+    <!-- Columna Izquierda: Gráfico Principal (3 columnas) -->
+    <section class="lg:col-span-3 flex flex-col gap-4">
+      <div id="chart-widget" class="bg-gray-800 rounded-lg p-2 h-[500px]">
+        <!-- Widget de Gráfico -->
+      </div>
+      <div id="news-widget" class="bg-gray-800 rounded-lg p-2 h-[350px]">
+        <!-- Widget de Noticias -->
+      </div>
+    </section>
+
+    <!-- Columna Derecha: Tickers y Calendario (1 columna) -->
+    <section class="flex flex-col gap-4">
+      <div id="watchlist-widget" class="bg-gray-800 rounded-lg p-2 h-[420px]">
+        <!-- Widget Watchlist -->
+      </div>
+      <div id="calendar-widget" class="bg-gray-800 rounded-lg p-2 h-[430px]">
+        <!-- Widget Calendario Económico -->
+      </div>
+    </section>
+  </main>
+</body>
+</html>
