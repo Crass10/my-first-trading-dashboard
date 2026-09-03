@@ -3,16 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multi-Asset Institutional Dashboard</title>
+  <title>Institutional Trading Dashboard - Forex Factory Calendar</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Scrollbar personalizada */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #1f2937; }
+    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+  </style>
 </head>
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
+  
   <!-- Header -->
   <header class="p-4 bg-gray-800 border-b border-gray-700 flex justify-between items-center">
     <div class="flex items-center gap-3">
-      <h1 class="text-xl font-bold text-yellow-400">Institutional Multi-Asset Dashboard</h1>
+      <h1 class="text-xl font-bold text-yellow-400">Institutional Dashboard</h1>
       <span class="text-xs bg-yellow-900/60 text-yellow-300 px-2 py-1 rounded border border-yellow-700">
-        XAUUSD | EURUSD | NQ1! | QQQUSDT (Bybit)
+        XAUUSD | EURUSD | NQ1! | QQQUSDT
       </span>
     </div>
     <span class="text-xs bg-green-900 text-green-300 px-2 py-1 rounded">Status: En Vivo</span>
@@ -21,11 +29,11 @@
   <!-- Main Layout Grid -->
   <main class="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 p-4">
     
-    <!-- Columna Izquierda: Gráfico Pro y Panel Forex Factory (3 columnas) -->
+    <!-- Columna Izquierda: Gráfico Pro y Módulo de Noticias de Forex Factory (3 columnas) -->
     <section class="lg:col-span-3 flex flex-col gap-4">
       
       <!-- Gráfico Pro con Watchlist Especializada -->
-      <div class="bg-gray-800 rounded-lg p-2 h-[550px] border border-gray-700">
+      <div class="bg-gray-800 rounded-lg p-2 h-[520px] border border-gray-700">
         <div class="tradingview-widget-container" style="height:100%;width:100%">
           <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
@@ -55,48 +63,101 @@
         </div>
       </div>
 
-      <!-- Módulo Forex Factory + Resumen Lateral -->
-      <div class="bg-gray-800 rounded-lg p-4 border border-gray-700 h-[380px] flex flex-col">
-        <div class="flex justify-between items-center mb-3">
-          <h2 class="text-sm font-bold text-red-400 flex items-center gap-2">
-            <span>🔴 Noticias de Alto Impacto - Forex Factory Feed</span>
-          </h2>
-          <span class="text-[11px] text-gray-400">USD & EUR Focus</span>
+      <!-- Módulo Forex Factory Live Calendar & Filter -->
+      <div class="bg-gray-800 rounded-lg p-4 border border-gray-700 min-h-[420px] flex flex-col">
+        
+        <!-- Barra de Filtros y Controles -->
+        <div class="flex flex-wrap justify-between items-center gap-3 mb-4 pb-3 border-b border-gray-700">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">📅</span>
+            <h2 class="text-sm font-bold text-yellow-400">Forex Factory Economic Calendar</h2>
+          </div>
+          
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <!-- Botones Rápidos de Fecha -->
+            <button onclick="filterByPreset('today')" class="px-2.5 py-1 bg-gray-700 hover:bg-yellow-600 rounded transition font-medium">Hoy</button>
+            <button onclick="filterByPreset('week')" class="px-2.5 py-1 bg-gray-700 hover:bg-yellow-600 rounded transition font-medium">Esta Semana</button>
+            <button onclick="filterByPreset('month')" class="px-2.5 py-1 bg-gray-700 hover:bg-yellow-600 rounded transition font-medium">Todo el Mes</button>
+            
+            <!-- Seleccionador de Fecha Específica -->
+            <input type="date" id="custom-date-picker" onchange="filterByCustomDate(this.value)" class="bg-gray-900 text-gray-200 px-2 py-1 rounded border border-gray-600 focus:outline-none focus:border-yellow-400">
+            
+            <!-- Filtro por Moneda -->
+            <select id="currency-filter" onchange="applyFilters()" class="bg-gray-900 text-gray-200 px-2 py-1 rounded border border-gray-600 focus:outline-none focus:border-yellow-400">
+              <option value="ALL">Todas las Monedas</option>
+              <option value="USD_EUR" selected>Solo USD / EUR</option>
+              <option value="USD">Solo USD</option>
+              <option value="EUR">Solo EUR</option>
+            </select>
+          </div>
         </div>
 
-        <!-- Contenedor dividido: Lista de Noticias (Izquierda) + Resumen Detallado (Derecha) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 overflow-hidden">
+        <!-- Contenedor Dividido: Tabla de Eventos (Izquierda) + Resumen de Noticia (Derecha) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1 overflow-hidden">
           
-          <!-- Lista de Eventos -->
-          <div id="ff-news-list" class="overflow-y-auto pr-2 space-y-2 text-xs divide-y divide-gray-700">
-            <div class="text-gray-400 p-2">Cargando noticias de Forex Factory...</div>
+          <!-- Tabla de Eventos Económicos (2 Columnas de Ancho) -->
+          <div class="md:col-span-2 overflow-y-auto max-h-[320px] border border-gray-700 rounded bg-gray-900/50">
+            <table class="w-full text-left text-xs text-gray-300">
+              <thead class="bg-gray-800 text-gray-400 uppercase text-[10px] sticky top-0 border-b border-gray-700">
+                <tr>
+                  <th class="p-2">Hora / Fecha</th>
+                  <th class="p-2">Moneda</th>
+                  <th class="p-2">Impacto</th>
+                  <th class="p-2">Evento</th>
+                  <th class="p-2 text-right">Actual / Previsión</th>
+                </tr>
+              </thead>
+              <tbody id="ff-calendar-tbody" class="divide-y divide-gray-800">
+                <tr>
+                  <td colspan="5" class="p-4 text-center text-gray-400">Cargando eventos de Forex Factory...</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <!-- Panel de Resumen Lateral -->
-          <div id="ff-news-summary" class="bg-gray-900 rounded p-3 border border-gray-700 flex flex-col justify-between">
-            <div>
-              <span class="text-[10px] text-yellow-400 font-semibold tracking-wider uppercase">Resumen de Noticia</span>
-              <h3 id="summary-title" class="text-sm font-bold text-white mt-1">Selecciona una noticia</h3>
+          <!-- Resumen Lateral de Noticia Seleccionada (1 Columna de Ancho) -->
+          <div id="ff-event-summary" class="bg-gray-900 rounded p-3 border border-gray-700 flex flex-col justify-between h-[320px]">
+            <div class="overflow-y-auto pr-1">
+              <span class="text-[10px] text-yellow-400 font-semibold tracking-wider uppercase">Detalle del Evento</span>
+              <h3 id="summary-title" class="text-sm font-bold text-white mt-1">Selecciona un evento de la lista</h3>
               <p id="summary-date" class="text-[11px] text-gray-400 mt-1"></p>
-              <div id="summary-body" class="text-xs text-gray-300 mt-3 leading-relaxed overflow-y-auto max-h-[160px]">
-                Haz clic en cualquier evento de la lista para ver el desglose técnico y su impacto en XAUUSD, EURUSD, NQ y QQQUSDT.
+              
+              <div id="summary-metrics" class="mt-3 grid grid-cols-3 gap-1 bg-gray-800 p-2 rounded text-center border border-gray-700 hidden">
+                <div>
+                  <div class="text-[9px] text-gray-400">Anterior</div>
+                  <div id="metric-previous" class="text-xs font-semibold text-gray-200">-</div>
+                </div>
+                <div>
+                  <div class="text-[9px] text-gray-400">Previsión</div>
+                  <div id="metric-forecast" class="text-xs font-semibold text-yellow-300">-</div>
+                </div>
+                <div>
+                  <div class="text-[9px] text-gray-400">Actual</div>
+                  <div id="metric-actual" class="text-xs font-semibold text-green-400">-</div>
+                </div>
+              </div>
+
+              <div id="summary-body" class="text-xs text-gray-300 mt-3 leading-relaxed">
+                Haz clic en cualquier evento para ver sus métricas clave, fecha exacta e impacto en XAUUSD, EURUSD, NQ y QQQUSDT.
               </div>
             </div>
-            <div class="mt-4 pt-2 border-t border-gray-800 flex justify-between text-[11px] text-gray-400">
-              <span>Impacto Macro: <strong id="summary-impact" class="text-gray-200">-</strong></span>
-              <span>Moneda / Región: <strong id="summary-currency" class="text-gray-200">-</strong></span>
+
+            <div class="pt-2 border-t border-gray-800 flex justify-between text-[11px] font-medium text-gray-400">
+              <span>Impacto: <strong id="summary-impact" class="text-gray-200">-</strong></span>
+              <a id="ff-direct-link" href="https://www.forexfactory.com/calendar" target="_blank" class="text-yellow-400 hover:underline">Abrir en ForexFactory ↗</a>
             </div>
           </div>
 
         </div>
+
       </div>
 
     </section>
 
-    <!-- Columna Derecha: Recursos GEX y Calendario (1 columna) -->
+    <!-- Columna Derecha: Recursos GEX y Widget Calendario (1 columna) -->
     <section class="flex flex-col gap-4">
       
-      <!-- Panel de Recursos Gamma Exposure (GEX) y Opciones -->
+      <!-- Panel de Recursos Gamma Exposure (GEX) -->
       <div class="bg-gray-800 rounded-lg p-3 border border-gray-700">
         <h2 class="text-sm font-bold text-yellow-400 mb-2 flex items-center justify-between">
           <span> Gamma / GEX Resources</span>
@@ -118,9 +179,9 @@
         </div>
       </div>
 
-      <!-- Calendario Económico Filtrado a USD y EUR -->
-      <div class="bg-gray-800 rounded-lg p-2 flex-1 min-h-[480px] border border-gray-700">
-        <div class="text-xs text-gray-400 mb-1 px-2 font-semibold">Eventos Clave (USD & EUR)</div>
+      <!-- Widget de Calendario Secundario (TradingView Backup) -->
+      <div class="bg-gray-800 rounded-lg p-2 flex-1 min-h-[400px] border border-gray-700">
+        <div class="text-xs text-gray-400 mb-1 px-2 font-semibold">Eventos Globales (Backup Live)</div>
         <div class="tradingview-widget-container" style="height:100%;width:100%">
           <div class="tradingview-widget-container__widget"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
@@ -140,59 +201,153 @@
     </section>
   </main>
 
-  <!-- Script para consumir RSS de Forex Factory y renderizar el Resumen -->
+  <!-- Script Lógico para Obtener, Filtrar y Renderizar Forex Factory -->
   <script>
-    const rssUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.forexfactory.com%2Fcalendar.xml';
+    let allEvents = [];
+    let currentFilterMode = 'month'; // 'today', 'week', 'month', 'custom'
+    let selectedCustomDate = null;
 
-    async function fetchForexFactoryNews() {
-      const newsListContainer = document.getElementById('ff-news-list');
+    // URL de la API con los datos en formato Forex Factory
+    const ffApiUrl = 'https://n8n.spookyservices.com/webhook/ff-calendar'; 
+    const backupApiUrl = 'https://n8n.spookyservices.com/webhook/ff-calendar';
+
+    async function loadCalendarData() {
+      const tbody = document.getElementById('ff-calendar-tbody');
+      tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">Obteniendo datos de Forex Factory...</td></tr>';
+
       try {
-        const response = await fetch(rssUrl);
-        const data = await response.json();
-
-        if (data.status === 'ok' && data.items.length > 0) {
-          newsListContainer.innerHTML = '';
-          
-          data.items.forEach((item, index) => {
-            const newsCard = document.createElement('div');
-            newsCard.className = 'pt-2 cursor-pointer hover:bg-gray-700/50 p-2 rounded transition border-l-2 border-transparent hover:border-yellow-400';
-            
-            newsCard.innerHTML = `
-              <div class="flex justify-between items-start gap-2">
-                <span class="font-semibold text-gray-200 hover:text-yellow-400 line-clamp-1">${item.title}</span>
-                <span class="text-[10px] text-gray-400 whitespace-nowrap">${new Date(item.pubDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-              </div>
-            `;
-
-            newsCard.addEventListener('click', () => showNewsSummary(item));
-            newsListContainer.appendChild(newsCard);
-
-            // Mostrar la primera noticia por defecto
-            if (index === 0) showNewsSummary(item);
-          });
-        } else {
-          newsListContainer.innerHTML = '<div class="text-gray-400 p-2">No se pudieron cargar las noticias de Forex Factory.</div>';
+        // Intento de conexión a API de respaldo estable con datos estructurados de Forex Factory
+        let response = await fetch('https://raw.githubusercontent.com/rrebase/economic-calendar/data/data.json');
+        if (!response.ok) {
+          response = await fetch('https://n8n.spookyservices.com/webhook/ff-calendar');
         }
+        
+        allEvents = await response.json();
+        applyFilters();
       } catch (error) {
-        newsListContainer.innerHTML = '<div class="text-red-400 p-2">Error al conectar con Forex Factory.</div>';
+        console.error("Error al cargar calendario:", error);
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="p-4 text-center text-red-400">
+              No se pudo cargar el feed automático. <a href="https://www.forexfactory.com/calendar" target="_blank" class="underline text-yellow-400">Haz clic aquí para abrir el calendario de Forex Factory directamente</a>.
+            </td>
+          </tr>`;
       }
     }
 
-    function showNewsSummary(item) {
-      document.getElementById('summary-title').innerText = item.title;
-      document.getElementById('summary-date').innerText = new Date(item.pubDate).toLocaleString();
-      
-      const cleanDescription = item.description ? item.description.replace(/<[^>]*>?/gm, '') : 'Sin detalles adicionales disponibles para este titular.';
-      document.getElementById('summary-body').innerText = cleanDescription;
-      
-      const isUSD = item.title.includes('USD') || item.title.includes('Fed') || item.title.includes('Dollar') || item.title.includes('FOMC') || item.title.includes('CPI');
-      const isEUR = item.title.includes('EUR') || item.title.includes('ECB') || item.title.includes('Euro');
-      
-      document.getElementById('summary-currency').innerText = isUSD ? 'USD (Afecta XAU, NQ, QQQ, EURUSD)' : (isEUR ? 'EUR' : 'GLOBAL');
-      document.getElementById('summary-impact').innerText = 'ALTO / MEDIO';
+    function applyFilters() {
+      if (!allEvents || allEvents.length === 0) return;
+
+      const currencyFilter = document.getElementById('currency-filter').value;
+      const today = new Date();
+
+      let filtered = allEvents.filter(event => {
+        const eventDate = new Date(event.date);
+
+        // 1. Filtro de Moneda
+        if (currencyFilter === 'USD_EUR' && !(event.country === 'USD' || event.country === 'EUR')) return false;
+        if (currencyFilter === 'USD' && event.country !== 'USD') return false;
+        if (currencyFilter === 'EUR' && event.country !== 'EUR') return false;
+
+        // 2. Filtro de Fecha
+        if (currentFilterMode === 'today') {
+          return eventDate.toDateString() === today.toDateString();
+        } else if (currentFilterMode === 'week') {
+          const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+          const lastDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+          return eventDate >= firstDayOfWeek && eventDate <= lastDayOfWeek;
+        } else if (currentFilterMode === 'month') {
+          return eventDate.getMonth() === new Date().getMonth() && eventDate.getFullYear() === new Date().getFullYear();
+        } else if (currentFilterMode === 'custom' && selectedCustomDate) {
+          const custom = new Date(selectedCustomDate);
+          return eventDate.toDateString() === custom.toDateString();
+        }
+
+        return true;
+      });
+
+      renderCalendarTable(filtered);
     }
 
-    fetchForexFactoryNews();
+    function renderCalendarTable(events) {
+      const tbody = document.getElementById('ff-calendar-tbody');
+      tbody.innerHTML = '';
+
+      if (events.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">No hay eventos para el filtro seleccionado.</td></tr>';
+        return;
+      }
+
+      events.forEach((event, index) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-800/80 cursor-pointer transition';
+
+        // Estilos de Impacto tipo Forex Factory (Rojo, Naranja, Amarillo)
+        let impactBadge = '<span class="px-1.5 py-0.5 rounded text-[9px] bg-gray-700 text-gray-300">Bajo</span>';
+        if (event.impact === 'High' || event.impact === 'Red') {
+          impactBadge = '<span class="px-1.5 py-0.5 rounded text-[9px] bg-red-900/80 text-red-300 font-bold border border-red-700">🔴 Alto</span>';
+        } else if (event.impact === 'Medium' || event.impact === 'Orange') {
+          impactBadge = '<span class="px-1.5 py-0.5 rounded text-[9px] bg-orange-900/80 text-orange-300 font-bold border border-orange-700">🟠 Medio</span>';
+        }
+
+        const dateFormatted = new Date(event.date).toLocaleDateString([], {month: 'short', day: 'numeric'});
+        const timeFormatted = event.time || new Date(event.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+        tr.innerHTML = `
+          <td class="p-2 text-[11px] text-gray-400 whitespace-nowrap">${dateFormatted} ${timeFormatted}</td>
+          <td class="p-2 font-bold text-gray-200">${event.country || 'USD'}</td>
+          <td class="p-2">${impactBadge}</td>
+          <td class="p-2 font-medium text-gray-200 hover:text-yellow-400 line-clamp-1">${event.title}</td>
+          <td class="p-2 text-right font-mono text-[11px]">
+            <span class="text-green-400 font-semibold">${event.actual || '-'}</span> / 
+            <span class="text-yellow-300">${event.forecast || '-'}</span>
+          </td>
+        `;
+
+        tr.addEventListener('click', () => showEventSummary(event));
+        tbody.appendChild(tr);
+
+        if (index === 0) showEventSummary(event);
+      });
+    }
+
+    function showEventSummary(event) {
+      document.getElementById('summary-title').innerText = event.title;
+      document.getElementById('summary-date').innerText = `${new Date(event.date).toLocaleString()} (${event.country})`;
+      
+      document.getElementById('summary-metrics').classList.remove('hidden');
+      document.getElementById('metric-previous').innerText = event.previous || '-';
+      document.getElementById('metric-forecast').innerText = event.forecast || '-';
+      document.getElementById('metric-actual').innerText = event.actual || '-';
+
+      const isUSD = event.country === 'USD';
+      const isEUR = event.country === 'EUR';
+
+      let impactText = `Este evento en ${event.country} puede generar volatilidad directa en `;
+      if (isUSD) impactText += 'el Dólar (USD), provocando movimientos marcados en XAUUSD (Oro), NQ (Nasdaq) y QQQUSDT.';
+      else if (isEUR) impactText += 'el Euro (EUR), impactando directamente al par EURUSD.';
+      else impactText += 'los mercados globales.';
+
+      document.getElementById('summary-body').innerText = impactText;
+      document.getElementById('summary-impact').innerText = event.impact || 'Medio / Alto';
+      document.getElementById('ff-direct-link').href = `https://www.forexfactory.com/calendar?day=${new Date(event.date).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}).toLowerCase().replace(/ /g, '')}`;
+    }
+
+    function filterByPreset(preset) {
+      currentFilterMode = preset;
+      document.getElementById('custom-date-picker').value = '';
+      applyFilters();
+    }
+
+    function filterByCustomDate(dateVal) {
+      if (!dateVal) return;
+      currentFilterMode = 'custom';
+      selectedCustomDate = dateVal;
+      applyFilters();
+    }
+
+    // Cargar datos al iniciar
+    loadCalendarData();
   </script>
 </body>
 </html>
