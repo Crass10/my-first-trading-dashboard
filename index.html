@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Institutional Trading Dashboard - Forex Factory Calendar</title>
+  <title>Institutional Trading Dashboard Pro</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Scrollbar personalizada */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #1f2937; }
     ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
@@ -16,24 +15,28 @@
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
   
   <!-- Header -->
-  <header class="p-4 bg-gray-800 border-b border-gray-700 flex justify-between items-center">
+  <header class="p-3 bg-gray-800 border-b border-gray-700 flex justify-between items-center">
     <div class="flex items-center gap-3">
-      <h1 class="text-xl font-bold text-yellow-400">Institutional Dashboard</h1>
-      <span class="text-xs bg-yellow-900/60 text-yellow-300 px-2 py-1 rounded border border-yellow-700">
+      <h1 class="text-lg font-bold text-yellow-400">TradingView Essential Analysis Dashboard</h1>
+      <span class="text-xs bg-yellow-900/60 text-yellow-300 px-2 py-0.5 rounded border border-yellow-700">
         XAUUSD | EURUSD | NQ1! | QQQUSDT
       </span>
     </div>
-    <span class="text-xs bg-green-900 text-green-300 px-2 py-1 rounded">Status: En Vivo</span>
+    <div class="flex items-center gap-2">
+      <a href="https://www.tradingview.com/chart/" target="_blank" class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded transition flex items-center gap-1">
+        <span>Abrir en TradingView Pro</span> ↗
+      </a>
+    </div>
   </header>
 
   <!-- Main Layout Grid -->
   <main class="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 p-4">
     
-    <!-- Columna Izquierda: Gráfico Pro y Módulo de Noticias de Forex Factory (3 columnas) -->
+    <!-- Columna Izquierda: Gráfico Pro Ampliado con Noticias Integradas y Volume Nodes (3 columnas) -->
     <section class="lg:col-span-3 flex flex-col gap-4">
       
-      <!-- Gráfico Pro con Watchlist Especializada -->
-      <div class="bg-gray-800 rounded-lg p-2 h-[520px] border border-gray-700">
+      <!-- Gráfico Pro con Volumen, Indicadores y Watchlist -->
+      <div class="bg-gray-800 rounded-lg p-2 h-[600px] border border-gray-700 relative">
         <div class="tradingview-widget-container" style="height:100%;width:100%">
           <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
@@ -49,8 +52,12 @@
             "hide_top_toolbar": false,
             "allow_symbol_change": true,
             "save_image": true,
-            "calendar": false,
-            "studies": ["STD;Volume"],
+            "calendar": true,
+            "hide_volume": false,
+            "studies": [
+              "STD;Volume",
+              "STD;Volume_Add_Volume"
+            ],
             "watchlist": [
               "OANDA:XAUUSD",
               "OANDA:EURUSD",
@@ -64,25 +71,21 @@
       </div>
 
       <!-- Módulo Forex Factory Live Calendar & Filter -->
-      <div class="bg-gray-800 rounded-lg p-4 border border-gray-700 min-h-[420px] flex flex-col">
+      <div class="bg-gray-800 rounded-lg p-4 border border-gray-700 min-h-[380px] flex flex-col">
         
-        <!-- Barra de Filtros y Controles -->
         <div class="flex flex-wrap justify-between items-center gap-3 mb-4 pb-3 border-b border-gray-700">
           <div class="flex items-center gap-2">
             <span class="text-lg">📅</span>
-            <h2 class="text-sm font-bold text-yellow-400">Forex Factory Economic Calendar</h2>
+            <h2 class="text-sm font-bold text-yellow-400">Forex Factory Economic Feed</h2>
           </div>
           
           <div class="flex flex-wrap items-center gap-2 text-xs">
-            <!-- Botones Rápidos de Fecha -->
             <button onclick="filterByPreset('today')" class="px-2.5 py-1 bg-gray-700 hover:bg-yellow-600 rounded transition font-medium">Hoy</button>
             <button onclick="filterByPreset('week')" class="px-2.5 py-1 bg-gray-700 hover:bg-yellow-600 rounded transition font-medium">Esta Semana</button>
             <button onclick="filterByPreset('month')" class="px-2.5 py-1 bg-gray-700 hover:bg-yellow-600 rounded transition font-medium">Todo el Mes</button>
             
-            <!-- Seleccionador de Fecha Específica -->
             <input type="date" id="custom-date-picker" onchange="filterByCustomDate(this.value)" class="bg-gray-900 text-gray-200 px-2 py-1 rounded border border-gray-600 focus:outline-none focus:border-yellow-400">
             
-            <!-- Filtro por Moneda -->
             <select id="currency-filter" onchange="applyFilters()" class="bg-gray-900 text-gray-200 px-2 py-1 rounded border border-gray-600 focus:outline-none focus:border-yellow-400">
               <option value="ALL">Todas las Monedas</option>
               <option value="USD_EUR" selected>Solo USD / EUR</option>
@@ -92,11 +95,9 @@
           </div>
         </div>
 
-        <!-- Contenedor Dividido: Tabla de Eventos (Izquierda) + Resumen de Noticia (Derecha) -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1 overflow-hidden">
           
-          <!-- Tabla de Eventos Económicos (2 Columnas de Ancho) -->
-          <div class="md:col-span-2 overflow-y-auto max-h-[320px] border border-gray-700 rounded bg-gray-900/50">
+          <div class="md:col-span-2 overflow-y-auto max-h-[280px] border border-gray-700 rounded bg-gray-900/50">
             <table class="w-full text-left text-xs text-gray-300">
               <thead class="bg-gray-800 text-gray-400 uppercase text-[10px] sticky top-0 border-b border-gray-700">
                 <tr>
@@ -115,8 +116,7 @@
             </table>
           </div>
 
-          <!-- Resumen Lateral de Noticia Seleccionada (1 Columna de Ancho) -->
-          <div id="ff-event-summary" class="bg-gray-900 rounded p-3 border border-gray-700 flex flex-col justify-between h-[320px]">
+          <div id="ff-event-summary" class="bg-gray-900 rounded p-3 border border-gray-700 flex flex-col justify-between h-[280px]">
             <div class="overflow-y-auto pr-1">
               <span class="text-[10px] text-yellow-400 font-semibold tracking-wider uppercase">Detalle del Evento</span>
               <h3 id="summary-title" class="text-sm font-bold text-white mt-1">Selecciona un evento de la lista</h3>
@@ -138,7 +138,7 @@
               </div>
 
               <div id="summary-body" class="text-xs text-gray-300 mt-3 leading-relaxed">
-                Haz clic en cualquier evento para ver sus métricas clave, fecha exacta e impacto en XAUUSD, EURUSD, NQ y QQQUSDT.
+                Haz clic en cualquier evento para ver sus métricas clave e impacto en XAUUSD, EURUSD, NQ y QQQUSDT.
               </div>
             </div>
 
@@ -154,9 +154,32 @@
 
     </section>
 
-    <!-- Columna Derecha: Recursos GEX y Widget Calendario (1 columna) -->
+    <!-- Columna Derecha: Streaming de Titulares de Noticias y Recursos Gamma (1 columna) -->
     <section class="flex flex-col gap-4">
       
+      <!-- Timeline de Noticias en Vivo de TradingView -->
+      <div class="bg-gray-800 rounded-lg p-2 h-[350px] border border-gray-700 flex flex-col">
+        <div class="text-xs text-yellow-400 font-bold mb-2 px-1 flex justify-between items-center">
+          <span>📰 Live Market News Stream</span>
+          <span class="text-[10px] bg-gray-700 text-gray-300 px-1 rounded">TV Feed</span>
+        </div>
+        <div class="tradingview-widget-container flex-1" style="height:100%;width:100%">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+          {
+            "feedMode": "market",
+            "market": "stock",
+            "colorTheme": "dark",
+            "isTransparent": true,
+            "displayMode": "regular",
+            "width": "100%",
+            "height": "100%",
+            "locale": "es"
+          }
+          </script>
+        </div>
+      </div>
+
       <!-- Panel de Recursos Gamma Exposure (GEX) -->
       <div class="bg-gray-800 rounded-lg p-3 border border-gray-700">
         <h2 class="text-sm font-bold text-yellow-400 mb-2 flex items-center justify-between">
@@ -179,44 +202,19 @@
         </div>
       </div>
 
-      <!-- Widget de Calendario Secundario (TradingView Backup) -->
-      <div class="bg-gray-800 rounded-lg p-2 flex-1 min-h-[400px] border border-gray-700">
-        <div class="text-xs text-gray-400 mb-1 px-2 font-semibold">Eventos Globales (Backup Live)</div>
-        <div class="tradingview-widget-container" style="height:100%;width:100%">
-          <div class="tradingview-widget-container__widget"></div>
-          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-          {
-            "colorTheme": "dark",
-            "isTransparent": true,
-            "width": "100%",
-            "height": "100%",
-            "locale": "es",
-            "importanceFilter": "0,1",
-            "currencyFilter": "USD,EUR"
-          }
-          </script>
-        </div>
-      </div>
-
     </section>
   </main>
 
-  <!-- Script Lógico para Obtener, Filtrar y Renderizar Forex Factory -->
   <script>
     let allEvents = [];
-    let currentFilterMode = 'month'; // 'today', 'week', 'month', 'custom'
+    let currentFilterMode = 'month';
     let selectedCustomDate = null;
-
-    // URL de la API con los datos en formato Forex Factory
-    const ffApiUrl = 'https://n8n.spookyservices.com/webhook/ff-calendar'; 
-    const backupApiUrl = 'https://n8n.spookyservices.com/webhook/ff-calendar';
 
     async function loadCalendarData() {
       const tbody = document.getElementById('ff-calendar-tbody');
       tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">Obteniendo datos de Forex Factory...</td></tr>';
 
       try {
-        // Intento de conexión a API de respaldo estable con datos estructurados de Forex Factory
         let response = await fetch('https://raw.githubusercontent.com/rrebase/economic-calendar/data/data.json');
         if (!response.ok) {
           response = await fetch('https://n8n.spookyservices.com/webhook/ff-calendar');
@@ -225,11 +223,10 @@
         allEvents = await response.json();
         applyFilters();
       } catch (error) {
-        console.error("Error al cargar calendario:", error);
         tbody.innerHTML = `
           <tr>
             <td colspan="5" class="p-4 text-center text-red-400">
-              No se pudo cargar el feed automático. <a href="https://www.forexfactory.com/calendar" target="_blank" class="underline text-yellow-400">Haz clic aquí para abrir el calendario de Forex Factory directamente</a>.
+              No se pudo cargar el feed automático. <a href="https://www.forexfactory.com/calendar" target="_blank" class="underline text-yellow-400">Haz clic aquí para abrir Forex Factory directamente</a>.
             </td>
           </tr>`;
       }
@@ -244,12 +241,10 @@
       let filtered = allEvents.filter(event => {
         const eventDate = new Date(event.date);
 
-        // 1. Filtro de Moneda
         if (currencyFilter === 'USD_EUR' && !(event.country === 'USD' || event.country === 'EUR')) return false;
         if (currencyFilter === 'USD' && event.country !== 'USD') return false;
         if (currencyFilter === 'EUR' && event.country !== 'EUR') return false;
 
-        // 2. Filtro de Fecha
         if (currentFilterMode === 'today') {
           return eventDate.toDateString() === today.toDateString();
         } else if (currentFilterMode === 'week') {
@@ -282,7 +277,6 @@
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-gray-800/80 cursor-pointer transition';
 
-        // Estilos de Impacto tipo Forex Factory (Rojo, Naranja, Amarillo)
         let impactBadge = '<span class="px-1.5 py-0.5 rounded text-[9px] bg-gray-700 text-gray-300">Bajo</span>';
         if (event.impact === 'High' || event.impact === 'Red') {
           impactBadge = '<span class="px-1.5 py-0.5 rounded text-[9px] bg-red-900/80 text-red-300 font-bold border border-red-700">🔴 Alto</span>';
@@ -346,7 +340,6 @@
       applyFilters();
     }
 
-    // Cargar datos al iniciar
     loadCalendarData();
   </script>
 </body>
