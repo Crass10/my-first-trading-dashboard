@@ -31,7 +31,7 @@
       <input type="password" id="gemini-api-key" placeholder="Pega tu API Key de Gemini aquí" 
              class="bg-gray-900 text-gray-200 px-2 py-1 rounded border border-gray-600 focus:outline-none focus:border-yellow-400 w-52">
       <button onclick="saveGeminiKey()" class="bg-yellow-600 hover:bg-yellow-500 text-black font-bold px-3 py-1 rounded transition">
-        Guardar
+        Guardar Key
       </button>
     </div>
   </header>
@@ -39,26 +39,52 @@
   <!-- Main Layout Grid -->
   <main class="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 p-4">
     
-    <!-- Columna Izquierda: Tu Gráfico Personal y Módulo de Noticias (3 columnas) -->
+    <!-- Columna Izquierda: Gráfico Avanzado y Módulo de Noticias (3 columnas) -->
     <section class="lg:col-span-3 flex flex-col gap-4">
       
-      <!-- Contenedor con Tu Gráfico Personal de TradingView -->
-      <div class="bg-gray-800 rounded-lg p-1 h-[620px] border border-gray-700 relative flex flex-col">
-        <div class="bg-gray-900 px-3 py-1.5 flex justify-between items-center text-xs text-gray-400 border-b border-gray-800">
-          <span class="font-medium text-yellow-400">📊 Tu Gráfico Personal de TradingView (d46tUPIb)</span>
-          <a href="https://es.tradingview.com/chart/d46tUPIb/" target="_blank" class="hover:text-white underline">Abrir en Pestaña Nueva ↗</a>
+      <!-- Gráfico Pro con Watchlist y Botón Directo a Tu Layout -->
+      <div class="bg-gray-800 rounded-lg p-2 h-[600px] border border-gray-700 relative flex flex-col">
+        <div class="bg-gray-900 px-3 py-1.5 flex justify-between items-center text-xs text-gray-400 border-b border-gray-800 rounded-t">
+          <span class="font-medium text-yellow-400">📊 Gráfico de Análisis Técnico en Vivo (Sin Bloqueos)</span>
+          <a href="https://es.tradingview.com/chart/d46tUPIb/" target="_blank" class="bg-blue-600 hover:bg-blue-500 text-white px-2.5 py-0.5 rounded transition font-semibold flex items-center gap-1">
+            <span>Abrir Tu Layout Guardado (d46tUPIb)</span> ↗
+          </a>
         </div>
-        <div class="flex-1 w-full h-full">
-          <iframe 
-            src="https://es.tradingview.com/chart/d46tUPIb/" 
-            class="w-full h-full border-0 rounded-b-lg"
-            allowfullscreen>
-          </iframe>
+        
+        <div class="tradingview-widget-container flex-1" style="height:calc(100% - 30px);width:100%">
+          <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+          {
+            "autosize": true,
+            "symbol": "OANDA:XAUUSD",
+            "interval": "60",
+            "timezone": "Etc/UTC",
+            "theme": "dark",
+            "style": "1",
+            "locale": "es",
+            "enable_publishing": false,
+            "hide_top_toolbar": false,
+            "allow_symbol_change": true,
+            "save_image": true,
+            "calendar": true,
+            "hide_volume": false,
+            "studies": [
+              "STD;Volume"
+            ],
+            "watchlist": [
+              "OANDA:XAUUSD",
+              "OANDA:EURUSD",
+              "CME_MINI:NQ1!",
+              "BYBIT:QQQUSDT"
+            ],
+            "support_host": "https://www.tradingview.com"
+          }
+          </script>
         </div>
       </div>
 
       <!-- Módulo Forex Factory Live Calendar & Interpretación con Gemini AI -->
-      <div class="bg-gray-800 rounded-lg p-4 border border-gray-700 min-h-[400px] flex flex-col">
+      <div class="bg-gray-800 rounded-lg p-4 border border-gray-700 min-h-[380px] flex flex-col">
         
         <div class="flex flex-wrap justify-between items-center gap-3 mb-4 pb-3 border-b border-gray-700">
           <div class="flex items-center gap-2">
@@ -85,7 +111,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1 overflow-hidden">
           
           <!-- Tabla de Eventos -->
-          <div class="md:col-span-2 overflow-y-auto max-h-[300px] border border-gray-700 rounded bg-gray-900/50">
+          <div class="md:col-span-2 overflow-y-auto max-h-[280px] border border-gray-700 rounded bg-gray-900/50">
             <table class="w-full text-left text-xs text-gray-300">
               <thead class="bg-gray-800 text-gray-400 uppercase text-[10px] sticky top-0 border-b border-gray-700">
                 <tr>
@@ -105,7 +131,7 @@
           </div>
 
           <!-- Módulo de Interpretación con IA Gemini -->
-          <div id="ff-event-summary" class="bg-gray-900 rounded p-3 border border-gray-700 flex flex-col justify-between h-[300px]">
+          <div id="ff-event-summary" class="bg-gray-900 rounded p-3 border border-gray-700 flex flex-col justify-between h-[280px]">
             <div class="overflow-y-auto pr-1">
               <div class="flex justify-between items-center">
                 <span class="text-[10px] text-yellow-400 font-semibold tracking-wider uppercase">Interpretación Gemini AI</span>
@@ -134,7 +160,7 @@
 
               <!-- Respuesta de la IA -->
               <div id="summary-body" class="text-xs text-gray-300 mt-3 leading-relaxed whitespace-pre-line">
-                Selecciona un evento y pulsa "Analizar con Gemini" para obtener un desglose del impacto técnico en Oro (XAUUSD), Euro (EURUSD) y Nasdaq (NQ/QQQ).
+                Selecciona un evento de la tabla y haz clic en "Analizar con Gemini" para ver el informe macroeconómico en XAUUSD, EURUSD, NQ y QQQUSDT.
               </div>
             </div>
 
@@ -207,7 +233,6 @@
     let selectedCustomDate = null;
     let selectedEvent = null;
 
-    // Guardar y Cargar Gemini API Key
     function saveGeminiKey() {
       const key = document.getElementById('gemini-api-key').value;
       if (key) {
@@ -331,7 +356,6 @@
       document.getElementById('summary-impact').innerText = event.impact || 'Medio / Alto';
     }
 
-    // Integración con API de Gemini
     async function analyzeCurrentEventWithGemini() {
       const apiKey = localStorage.getItem('gemini_api_key') || document.getElementById('gemini-api-key').value;
       const summaryBody = document.getElementById('summary-body');
