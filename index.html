@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Institutional Trading Dashboard - AI Powered</title>
+  <title>Open Source Trading Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Library Open Source: TradingView Lightweight Charts -->
+  <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
   <style>
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #1f2937; }
@@ -14,257 +16,204 @@
 </head>
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
   
-  <!-- Header -->
+  <!-- Header Minimalista -->
   <header class="p-3 bg-gray-800 border-b border-gray-700 flex justify-between items-center flex-wrap gap-2">
     <div class="flex items-center gap-3">
       <h1 class="text-lg font-bold text-yellow-400 flex items-center gap-2">
-        <span>⚡ Institutional Multi-Asset Dashboard</span>
+        <span>⚡ Open Source Multi-Asset Dashboard</span>
       </h1>
-      <span class="text-xs bg-yellow-900/60 text-yellow-300 px-2 py-0.5 rounded border border-yellow-700">
-        XAUUSD | EURUSD | NQ1! | QQQUSDT
+      <span class="text-xs bg-gray-700 text-gray-300 px-2 py-0.5 rounded border border-gray-600">
+        Standalone Engine (Canvas Rendered)
       </span>
     </div>
     
-    <!-- Configuración Gemini Key -->
     <div class="flex items-center gap-2 text-xs">
-      <span class="text-gray-400">Gemini API Key:</span>
-      <input type="password" id="gemini-api-key" placeholder="Pega tu API Key de Gemini aquí" 
-             class="bg-gray-900 text-gray-200 px-2 py-1 rounded border border-gray-600 focus:outline-none focus:border-yellow-400 w-52">
-      <button onclick="saveGeminiKey()" class="bg-yellow-600 hover:bg-yellow-500 text-black font-bold px-3 py-1 rounded transition">
-        Guardar Key
-      </button>
+      <button onclick="changeAsset('XAUUSD')" id="btn-XAUUSD" class="px-3 py-1 bg-yellow-600 font-bold text-black rounded transition">XAUUSD</button>
+      <button onclick="changeAsset('EURUSD')" id="btn-EURUSD" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded transition">EURUSD</button>
+      <button onclick="changeAsset('NASDAQ')" id="btn-NASDAQ" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded transition">NQ / QQQ</button>
     </div>
   </header>
 
   <!-- Main Layout Grid -->
-  <main class="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 p-4">
+  <main class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 p-4">
     
-    <!-- Columna Izquierda: Gráfico Avanzado y Módulo de Noticias (3 columnas) -->
-    <section class="lg:col-span-3 flex flex-col gap-4">
+    <!-- Columna Principal: Gráfico Open Source (2 columnas) -->
+    <section class="lg:col-span-2 flex flex-col gap-4">
       
-      <!-- Gráfico Pro con Watchlist y Botón Directo a Tu Layout -->
-      <div class="bg-gray-800 rounded-lg p-2 h-[600px] border border-gray-700 relative flex flex-col">
-        <div class="bg-gray-900 px-3 py-1.5 flex justify-between items-center text-xs text-gray-400 border-b border-gray-800 rounded-t">
-          <span class="font-medium text-yellow-400">📊 Gráfico de Análisis Técnico en Vivo (Sin Bloqueos)</span>
-          <a href="https://es.tradingview.com/chart/" target="_blank" class="bg-blue-600 hover:bg-blue-500 text-white px-2.5 py-0.5 rounded transition font-semibold flex items-center gap-1">
-          </a>
+      <!-- Contenedor del Gráfico Canvas -->
+      <div class="bg-gray-800 rounded-lg p-3 h-[500px] border border-gray-700 flex flex-col relative">
+        <div class="flex justify-between items-center mb-2 pb-2 border-b border-gray-700 text-xs">
+          <span id="chart-title" class="font-bold text-yellow-400">XAUUSD - Live Open Source Canvas Chart</span>
+          <div class="flex gap-2">
+            <span class="text-gray-400">Timeframe: <strong class="text-white">1H</strong></span>
+          </div>
         </div>
         
-        <div class="tradingview-widget-container flex-1" style="height:calc(100% - 30px);width:100%">
-          <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-          {
-            "autosize": true,
-            "symbol": "OANDA:XAUUSD",
-            "interval": "60",
-            "timezone": "Etc/UTC",
-            "theme": "dark",
-            "style": "1",
-            "locale": "es",
-            "enable_publishing": false,
-            "hide_top_toolbar": false,
-            "allow_symbol_change": true,
-            "save_image": true,
-            "calendar": true,
-            "hide_volume": false,
-            "studies": [
-              "STD;Volume"
-            ],
-            "watchlist": [
-              "OANDA:XAUUSD",
-              "OANDA:EURUSD",
-              "CME_MINI:NQ1!",
-              "BYBIT:QQQUSDT.P"
-            ],
-            "support_host": "https://www.tradingview.com"
-          }
-          </script>
-        </div>
-      </div>
-
-      <!-- Módulo Forex Factory Live Calendar & Interpretación con Gemini AI -->
-      <div class="bg-gray-800 rounded-lg p-4 border border-gray-700 min-h-[380px] flex flex-col">
-        
-        <div class="flex flex-wrap justify-between items-center gap-3 mb-4 pb-3 border-b border-gray-700">
-          <div class="flex items-center gap-2">
-            <span class="text-lg">📅</span>
-            <h2 class="text-sm font-bold text-yellow-400">Forex Factory Feed & Gemini AI Interpreter</h2>
-          </div>
-          
-          <div class="flex flex-wrap items-center gap-2 text-xs">
-            <button onclick="filterByPreset('today')" class="px-2.5 py-1 bg-gray-700 hover:bg-yellow-600 rounded transition font-medium">Hoy</button>
-            <button onclick="filterByPreset('week')" class="px-2.5 py-1 bg-gray-700 hover:bg-yellow-600 rounded transition font-medium">Esta Semana</button>
-            <button onclick="filterByPreset('month')" class="px-2.5 py-1 bg-gray-700 hover:bg-yellow-600 rounded transition font-medium">Todo el Mes</button>
-            
-            <input type="date" id="custom-date-picker" onchange="filterByCustomDate(this.value)" class="bg-gray-900 text-gray-200 px-2 py-1 rounded border border-gray-600 focus:outline-none focus:border-yellow-400">
-            
-            <select id="currency-filter" onchange="applyFilters()" class="bg-gray-900 text-gray-200 px-2 py-1 rounded border border-gray-600 focus:outline-none focus:border-yellow-400">
-              <option value="ALL">Todas las Monedas</option>
-              <option value="USD_EUR" selected>Solo USD / EUR</option>
-              <option value="USD">Solo USD</option>
-              <option value="EUR">Solo EUR</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1 overflow-hidden">
-          
-          <!-- Tabla de Eventos -->
-          <div class="md:col-span-2 overflow-y-auto max-h-[280px] border border-gray-700 rounded bg-gray-900/50">
-            <table class="w-full text-left text-xs text-gray-300">
-              <thead class="bg-gray-800 text-gray-400 uppercase text-[10px] sticky top-0 border-b border-gray-700">
-                <tr>
-                  <th class="p-2">Fecha / Hora</th>
-                  <th class="p-2">Moneda</th>
-                  <th class="p-2">Impacto</th>
-                  <th class="p-2">Evento</th>
-                  <th class="p-2 text-right">Actual / Previsión</th>
-                </tr>
-              </thead>
-              <tbody id="ff-calendar-tbody" class="divide-y divide-gray-800">
-                <tr>
-                  <td colspan="5" class="p-4 text-center text-gray-400">Cargando eventos de Forex Factory...</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Módulo de Interpretación con IA Gemini -->
-          <div id="ff-event-summary" class="bg-gray-900 rounded p-3 border border-gray-700 flex flex-col justify-between h-[280px]">
-            <div class="overflow-y-auto pr-1">
-              <div class="flex justify-between items-center">
-                <span class="text-[10px] text-yellow-400 font-semibold tracking-wider uppercase">Interpretación Gemini AI</span>
-                <button onclick="analyzeCurrentEventWithGemini()" id="btn-ai-analyze" class="text-[10px] bg-purple-900 hover:bg-purple-800 text-purple-200 px-2 py-0.5 rounded border border-purple-600 font-bold">
-                  ✨ Analizar con Gemini
-                </button>
-              </div>
-              
-              <h3 id="summary-title" class="text-sm font-bold text-white mt-2">Selecciona un evento de la lista</h3>
-              <p id="summary-date" class="text-[11px] text-gray-400 mt-0.5"></p>
-              
-              <div id="summary-metrics" class="mt-2 grid grid-cols-3 gap-1 bg-gray-800 p-2 rounded text-center border border-gray-700 hidden">
-                <div>
-                  <div class="text-[9px] text-gray-400">Anterior</div>
-                  <div id="metric-previous" class="text-xs font-semibold text-gray-200">-</div>
-                </div>
-                <div>
-                  <div class="text-[9px] text-gray-400">Previsión</div>
-                  <div id="metric-forecast" class="text-xs font-semibold text-yellow-300">-</div>
-                </div>
-                <div>
-                  <div class="text-[9px] text-gray-400">Actual</div>
-                  <div id="metric-actual" class="text-xs font-semibold text-green-400">-</div>
-                </div>
-              </div>
-
-              <!-- Respuesta de la IA -->
-              <div id="summary-body" class="text-xs text-gray-300 mt-3 leading-relaxed whitespace-pre-line">
-                Selecciona un evento de la tabla y haz clic en "Analizar con Gemini" para ver el informe macroeconómico en XAUUSD, EURUSD, NQ y QQQUSDT.
-              </div>
-            </div>
-
-            <div class="pt-2 border-t border-gray-800 flex justify-between text-[11px] font-medium text-gray-400">
-              <span>Impacto: <strong id="summary-impact" class="text-gray-200">-</strong></span>
-              <a id="ff-direct-link" href="https://www.forexfactory.com/calendar" target="_blank" class="text-yellow-400 hover:underline">ForexFactory ↗</a>
-            </div>
-          </div>
-
-        </div>
-
+        <!-- Render del Canvas con Lightweight Charts -->
+        <div id="open-source-chart" class="flex-1 w-full h-full rounded"></div>
       </div>
 
     </section>
 
-    <!-- Columna Derecha: News Feed & GEX Resources (1 columna) -->
+    <!-- Columna Derecha: Forex Factory Calendar (1 columna) -->
     <section class="flex flex-col gap-4">
       
-      <!-- Live Market News Stream de TradingView -->
-      <div class="bg-gray-800 rounded-lg p-2 h-[380px] border border-gray-700 flex flex-col">
-        <div class="text-xs text-yellow-400 font-bold mb-2 px-1 flex justify-between items-center">
-          <span>📰 Live Market News Stream</span>
-          <span class="text-[10px] bg-gray-700 text-gray-300 px-1 rounded">TV Feed</span>
+      <!-- Módulo Economic Calendar -->
+      <div class="bg-gray-800 rounded-lg p-4 border border-gray-700 h-[500px] flex flex-col">
+        
+        <div class="flex flex-wrap justify-between items-center gap-2 mb-3 pb-2 border-b border-gray-700">
+          <div class="flex items-center gap-2">
+            <span class="text-base">📅</span>
+            <h2 class="text-xs font-bold text-yellow-400">Economic Feed</h2>
+          </div>
+          
+          <select id="currency-filter" onchange="applyFilters()" class="bg-gray-900 text-gray-200 text-xs px-2 py-1 rounded border border-gray-600 focus:outline-none">
+            <option value="ALL">Todas las Monedas</option>
+            <option value="USD_EUR" selected>USD / EUR</option>
+            <option value="USD">Solo USD</option>
+            <option value="EUR">Solo EUR</option>
+          </select>
         </div>
-        <div class="tradingview-widget-container flex-1" style="height:100%;width:100%">
-          <div class="tradingview-widget-container__widget"></div>
-          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
-          {
-            "feedMode": "market",
-            "market": "stock",
-            "colorTheme": "dark",
-            "isTransparent": true,
-            "displayMode": "regular",
-            "width": "100%",
-            "height": "100%",
-            "locale": "es"
-          }
-          </script>
-        </div>
-      </div>
 
-      <!-- Recursos Gamma Exposure (GEX) -->
-      <div class="bg-gray-800 rounded-lg p-3 border border-gray-700">
-        <h2 class="text-sm font-bold text-yellow-400 mb-2 flex items-center justify-between">
-          <span> Gamma / GEX Resources</span>
-          <span class="text-[10px] bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded">Opciones</span>
-        </h2>
-        <div class="flex flex-col gap-2 text-xs">
-          <a href="https://squeezemetrics.com/monitor/gex" target="_blank" class="p-2 bg-gray-900 hover:bg-gray-700 rounded border border-gray-700 transition flex justify-between items-center">
-            <span class="font-medium text-blue-300">SqueezeMetrics (GEX)</span>
-            <span class="text-[10px] text-gray-400">Ver ↗</span>
-          </a>
-          <a href="https://spotgamma.com/" target="_blank" class="p-2 bg-gray-900 hover:bg-gray-700 rounded border border-gray-700 transition flex justify-between items-center">
-            <span class="font-medium text-yellow-300">SpotGamma (NQ / QQQ)</span>
-            <span class="text-[10px] text-gray-400">Niveles ↗</span>
-          </a>
-          <a href="https://www.barchart.com/etfs-in-focus/QQQ/options" target="_blank" class="p-2 bg-gray-900 hover:bg-gray-700 rounded border border-gray-700 transition flex justify-between items-center">
-            <span class="font-medium text-green-300">Barchart QQQ Options</span>
-            <span class="text-[10px] text-gray-400">Open Interest ↗</span>
-          </a>
+        <div class="flex gap-1 mb-3 text-[11px]">
+          <button onclick="filterByPreset('today')" class="flex-1 py-1 bg-gray-700 hover:bg-yellow-600 rounded transition text-center font-medium">Hoy</button>
+          <button onclick="filterByPreset('week')" class="flex-1 py-1 bg-gray-700 hover:bg-yellow-600 rounded transition text-center font-medium">Semana</button>
+          <button onclick="filterByPreset('month')" class="flex-1 py-1 bg-gray-700 hover:bg-yellow-600 rounded transition text-center font-medium">Mes</button>
         </div>
+
+        <!-- Tabla de Eventos Económicos -->
+        <div class="overflow-y-auto flex-1 border border-gray-700 rounded bg-gray-900/50">
+          <table class="w-full text-left text-xs text-gray-300">
+            <thead class="bg-gray-800 text-gray-400 uppercase text-[9px] sticky top-0 border-b border-gray-700">
+              <tr>
+                <th class="p-2">Fecha/Hora</th>
+                <th class="p-2">Divisa</th>
+                <th class="p-2">Evento</th>
+                <th class="p-2 text-right">Act/Prev</th>
+              </tr>
+            </thead>
+            <tbody id="ff-calendar-tbody" class="divide-y divide-gray-800">
+              <tr>
+                <td colspan="4" class="p-4 text-center text-gray-400">Cargando eventos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
       </div>
 
     </section>
   </main>
 
   <script>
+    let chart, candleSeries, volumeSeries;
+    let currentAsset = 'XAUUSD';
     let allEvents = [];
     let currentFilterMode = 'month';
-    let selectedCustomDate = null;
-    let selectedEvent = null;
 
-    function saveGeminiKey() {
-      const key = document.getElementById('gemini-api-key').value;
-      if (key) {
-        localStorage.setItem('gemini_api_key', key);
-        alert('API Key de Gemini guardada correctamente.');
-      }
+    // Inicializar Gráfico Lightweight Open Source
+    function initChart() {
+      const container = document.getElementById('open-source-chart');
+      
+      chart = LightweightCharts.createChart(container, {
+        width: container.clientWidth,
+        height: container.clientHeight,
+        layout: {
+          backgroundColor: '#111827',
+          textColor: '#D1D5DB',
+        },
+        grid: {
+          vertLines: { color: '#1F2937' },
+          horzLines: { color: '#1F2937' },
+        },
+        crosshair: {
+          mode: LightweightCharts.CrosshairMode.Normal,
+        },
+        priceScale: {
+          borderColor: '#374151',
+        },
+        timeScale: {
+          borderColor: '#374151',
+          timeVisible: true,
+        },
+      });
+
+      candleSeries = chart.addCandlestickSeries({
+        upColor: '#10B981',
+        downColor: '#EF4444',
+        borderDownColor: '#EF4444',
+        borderUpColor: '#10B981',
+        wickDownColor: '#EF4444',
+        wickUpColor: '#10B981',
+      });
+
+      volumeSeries = chart.addHistogramSeries({
+        color: '#26a69a',
+        priceFormat: { type: 'volume' },
+        priceScaleId: '',
+        scaleMargins: { top: 0.8, bottom: 0 },
+      });
+
+      loadSampleData(currentAsset);
+
+      window.addEventListener('resize', () => {
+        chart.applyOptions({ width: container.clientWidth, height: container.clientHeight });
+      });
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const savedKey = localStorage.getItem('gemini_api_key');
-      if (savedKey) document.getElementById('gemini-api-key').value = savedKey;
-      loadCalendarData();
-    });
+    // Generar o Cargar Datos Simulados para el Gráfico
+    function loadSampleData(asset) {
+      document.getElementById('chart-title').innerText = `${asset} - Live Open Source Canvas Chart`;
 
+      let basePrice = asset === 'XAUUSD' ? 2400 : (asset === 'EURUSD' ? 1.0850 : 19500);
+      let data = [];
+      let volumeData = [];
+      let now = new Date();
+      now.setDate(now.getDate() - 30);
+
+      for (let i = 0; i < 100; i++) {
+        let open = basePrice + (Math.random() - 0.48) * (basePrice * 0.005);
+        let high = open + Math.random() * (basePrice * 0.003);
+        let low = open - Math.random() * (basePrice * 0.003);
+        let close = (high + low) / 2;
+        let time = Math.floor(now.getTime() / 1000) + (i * 86400);
+
+        data.push({ time, open, high, low, close });
+        volumeData.push({
+          time,
+          value: Math.floor(Math.random() * 1000) + 100,
+          color: close >= open ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)'
+        });
+
+        basePrice = close;
+      }
+
+      candleSeries.setData(data);
+      volumeSeries.setData(volumeData);
+    }
+
+    function changeAsset(asset) {
+      currentAsset = asset;
+      ['XAUUSD', 'EURUSD', 'NASDAQ'].forEach(a => {
+        const btn = document.getElementById(`btn-${a}`);
+        if (a === asset) {
+          btn.className = 'px-3 py-1 bg-yellow-600 font-bold text-black rounded transition';
+        } else {
+          btn.className = 'px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded transition';
+        }
+      });
+      loadSampleData(asset);
+    }
+
+    // Lógica Calendario
     async function loadCalendarData() {
       const tbody = document.getElementById('ff-calendar-tbody');
-      tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">Obteniendo datos de Forex Factory...</td></tr>';
-
       try {
         let response = await fetch('https://raw.githubusercontent.com/rrebase/economic-calendar/data/data.json');
-        if (!response.ok) {
-          response = await fetch('https://n8n.spookyservices.com/webhook/ff-calendar');
-        }
-        
         allEvents = await response.json();
         applyFilters();
       } catch (error) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="5" class="p-4 text-center text-red-400">
-              Error al cargar datos. <a href="https://www.forexfactory.com/calendar" target="_blank" class="underline text-yellow-400">Abrir Forex Factory directamente</a>.
-            </td>
-          </tr>`;
+        tbody.innerHTML = '<tr><td colspan="4" class="p-2 text-center text-red-400">Error al cargar el feed.</td></tr>';
       }
     }
 
@@ -284,14 +233,11 @@
         if (currentFilterMode === 'today') {
           return eventDate.toDateString() === today.toDateString();
         } else if (currentFilterMode === 'week') {
-          const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
-          const lastDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
-          return eventDate >= firstDayOfWeek && eventDate <= lastDayOfWeek;
+          const first = new Date(today.setDate(today.getDate() - today.getDay()));
+          const last = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+          return eventDate >= first && eventDate <= last;
         } else if (currentFilterMode === 'month') {
           return eventDate.getMonth() === new Date().getMonth() && eventDate.getFullYear() === new Date().getFullYear();
-        } else if (currentFilterMode === 'custom' && selectedCustomDate) {
-          const custom = new Date(selectedCustomDate);
-          return eventDate.toDateString() === custom.toDateString();
         }
 
         return true;
@@ -305,115 +251,41 @@
       tbody.innerHTML = '';
 
       if (events.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">No hay eventos para el filtro seleccionado.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="p-2 text-center text-gray-400">Sin eventos.</td></tr>';
         return;
       }
 
-      events.forEach((event, index) => {
+      events.forEach(event => {
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-gray-800/80 cursor-pointer transition';
+        tr.className = 'hover:bg-gray-800 transition';
 
-        let impactBadge = '<span class="px-1.5 py-0.5 rounded text-[9px] bg-gray-700 text-gray-300">Bajo</span>';
-        if (event.impact === 'High' || event.impact === 'Red') {
-          impactBadge = '<span class="px-1.5 py-0.5 rounded text-[9px] bg-red-900/80 text-red-300 font-bold border border-red-700">🔴 Alto</span>';
-        } else if (event.impact === 'Medium' || event.impact === 'Orange') {
-          impactBadge = '<span class="px-1.5 py-0.5 rounded text-[9px] bg-orange-900/80 text-orange-300 font-bold border border-orange-700">🟠 Medio</span>';
-        }
+        let impactIcon = '⚪';
+        if (event.impact === 'High' || event.impact === 'Red') impactIcon = '🔴';
+        else if (event.impact === 'Medium' || event.impact === 'Orange') impactIcon = '🟠';
 
-        const dateFormatted = new Date(event.date).toLocaleDateString([], {month: 'short', day: 'numeric'});
-        const timeFormatted = event.time || new Date(event.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const dateFormatted = new Date(event.date).toLocaleDateString([], {month: 'numeric', day: 'numeric'});
 
         tr.innerHTML = `
-          <td class="p-2 text-[11px] text-gray-400 whitespace-nowrap">${dateFormatted} ${timeFormatted}</td>
-          <td class="p-2 font-bold text-gray-200">${event.country || 'USD'}</td>
-          <td class="p-2">${impactBadge}</td>
-          <td class="p-2 font-medium text-gray-200 hover:text-yellow-400 line-clamp-1">${event.title}</td>
-          <td class="p-2 text-right font-mono text-[11px]">
-            <span class="text-green-400 font-semibold">${event.actual || '-'}</span> / 
-            <span class="text-yellow-300">${event.forecast || '-'}</span>
+          <td class="p-1.5 text-[10px] text-gray-400">${dateFormatted}</td>
+          <td class="p-1.5 font-bold text-gray-200">${event.country || 'USD'} ${impactIcon}</td>
+          <td class="p-1.5 font-medium text-gray-300 truncate max-w-[100px]">${event.title}</td>
+          <td class="p-1.5 text-right font-mono text-[10px]">
+            <span class="text-green-400">${event.actual || '-'}</span>/<span class="text-yellow-300">${event.forecast || '-'}</span>
           </td>
         `;
-
-        tr.addEventListener('click', () => showEventSummary(event));
         tbody.appendChild(tr);
-
-        if (index === 0) showEventSummary(event);
       });
-    }
-
-    function showEventSummary(event) {
-      selectedEvent = event;
-      document.getElementById('summary-title').innerText = event.title;
-      document.getElementById('summary-date').innerText = `${new Date(event.date).toLocaleString()} (${event.country})`;
-      
-      document.getElementById('summary-metrics').classList.remove('hidden');
-      document.getElementById('metric-previous').innerText = event.previous || '-';
-      document.getElementById('metric-forecast').innerText = event.forecast || '-';
-      document.getElementById('metric-actual').innerText = event.actual || '-';
-
-      document.getElementById('summary-body').innerText = `Seleccionado: "${event.title}". Haz clic en "✨ Analizar con Gemini" para obtener la interpretación macroeconómica.`;
-      document.getElementById('summary-impact').innerText = event.impact || 'Medio / Alto';
-    }
-
-    async function analyzeCurrentEventWithGemini() {
-      const apiKey = localStorage.getItem('gemini_api_key') || document.getElementById('gemini-api-key').value;
-      const summaryBody = document.getElementById('summary-body');
-
-      if (!apiKey) {
-        alert('Por favor, ingresa tu Gemini API Key en la barra superior para activar las explicaciones por IA.');
-        return;
-      }
-
-      if (!selectedEvent) return;
-
-      summaryBody.innerText = "🧠 Gemini AI analizando impacto técnico...";
-
-      const prompt = `Actúa como un trader institucional especializado en Forex y Futuros. Analiza este evento económico:
-- Evento: ${selectedEvent.title}
-- Moneda: ${selectedEvent.country}
-- Dato Previo: ${selectedEvent.previous || 'N/A'}
-- Previsión: ${selectedEvent.forecast || 'N/A'}
-- Dato Actual: ${selectedEvent.actual || 'N/A'}
-
-Explica de forma concisa (máximo 4 oraciones) en español cómo afectará la volatilidad y dirección a los siguientes activos:
-1. XAUUSD (Oro)
-2. EURUSD
-3. NQ1! / QQQUSDT (Nasdaq)`;
-
-      try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }]
-          })
-        });
-
-        const data = await response.json();
-        
-        if (data.candidates && data.candidates[0].content.parts[0].text) {
-          summaryBody.innerText = data.candidates[0].content.parts[0].text;
-        } else {
-          summaryBody.innerText = "Error al procesar la respuesta de Gemini. Verifica tu API Key.";
-        }
-      } catch (error) {
-        console.error(error);
-        summaryBody.innerText = "Error de conexión con la API de Gemini.";
-      }
     }
 
     function filterByPreset(preset) {
       currentFilterMode = preset;
-      document.getElementById('custom-date-picker').value = '';
       applyFilters();
     }
 
-    function filterByCustomDate(dateVal) {
-      if (!dateVal) return;
-      currentFilterMode = 'custom';
-      selectedCustomDate = dateVal;
-      applyFilters();
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      initChart();
+      loadCalendarData();
+    });
   </script>
 </body>
 </html>
