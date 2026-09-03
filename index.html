@@ -3,28 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pro Trading Dashboard</title>
+  <title>Gold & EUR/USD Institutional Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
   <!-- Header -->
   <header class="p-4 bg-gray-800 border-b border-gray-700 flex justify-between items-center">
-    <h1 class="text-xl font-bold text-green-400">Live Trading Dashboard</h1>
+    <div class="flex items-center gap-3">
+      <h1 class="text-xl font-bold text-yellow-400">Institutional Dashboard</h1>
+      <span class="text-xs bg-yellow-900/60 text-yellow-300 px-2 py-1 rounded border border-yellow-700">Focus: XAUUSD & EURUSD</span>
+    </div>
     <span class="text-xs bg-green-900 text-green-300 px-2 py-1 rounded">Status: En Vivo</span>
   </header>
 
   <!-- Main Layout Grid -->
   <main class="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 p-4">
-    <!-- Columna Izquierda: Gráfico Pro y Noticias (3 columnas) -->
+    
+    <!-- Columna Izquierda: Gráficos y Feeds de Noticias (3 columnas) -->
     <section class="lg:col-span-3 flex flex-col gap-4">
-      <div class="bg-gray-800 rounded-lg p-2 h-[550px]">
-        <!-- Widget Gráfico Avanzado con Watchlist Integrada -->
+      
+      <!-- Gráfico Pro con XAUUSD y EURUSD en Watchlist -->
+      <div class="bg-gray-800 rounded-lg p-2 h-[550px] border border-gray-700">
         <div class="tradingview-widget-container" style="height:100%;width:100%">
           <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
           {
             "autosize": true,
-            "symbol": "OANDA:EURUSD",
+            "symbol": "OANDA:XAUUSD",
             "interval": "60",
             "timezone": "Etc/UTC",
             "theme": "dark",
@@ -39,11 +44,8 @@
               "STD;Volume"
             ],
             "watchlist": [
-              "OANDA:EURUSD",
-              "OANDA:GBPUSD",
-              "OANDA:GBPJPY",
               "OANDA:XAUUSD",
-              "BINANCE:BTCUSDT"
+              "OANDA:EURUSD"
             ],
             "support_host": "https://www.tradingview.com"
           }
@@ -51,13 +53,15 @@
         </div>
       </div>
 
-      <div class="bg-gray-800 rounded-lg p-2 h-[350px]">
-        <!-- Widget Noticias en Tiempo Real -->
+      <!-- Feed de Noticias Filtrado -->
+      <div class="bg-gray-800 rounded-lg p-2 h-[350px] border border-gray-700">
+        <div class="text-xs text-gray-400 mb-1 px-2 font-semibold">Noticias Macroeconómicas & Flujo Relevante (USD / EUR / Oro)</div>
         <div class="tradingview-widget-container" style="height:100%;width:100%">
           <div class="tradingview-widget-container__widget"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
           {
-            "feedMode": "all_symbols",
+            "feedMode": "market",
+            "market": "forex",
             "isTransparent": true,
             "displayMode": "regular",
             "width": "100%",
@@ -68,12 +72,39 @@
           </script>
         </div>
       </div>
+
     </section>
 
-    <!-- Columna Derecha: Calendario Económico Personalizado (1 columna) -->
+    <!-- Columna Derecha: Calendario Filtrado + Recursos de GEX / Gamma (1 columna) -->
     <section class="flex flex-col gap-4">
-      <div class="bg-gray-800 rounded-lg p-2 h-[916px]">
-        <!-- Widget Calendario Filtrado por Divisas clave -->
+      
+      <!-- Panel de Recursos Gamma Exposure (GEX) y Opciones -->
+      <div class="bg-gray-800 rounded-lg p-3 border border-gray-700">
+        <h2 class="text-sm font-bold text-yellow-400 mb-2 flex items-center justify-between">
+          <span> Gamma / GEX Resources</span>
+          <span class="text-[10px] bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded">Opciones</span>
+        </h2>
+        <p class="text-xs text-gray-400 mb-3">Servicios y herramientas para analizar niveles de Gamma y exposición del Market Maker:</p>
+        
+        <div class="flex flex-col gap-2 text-xs">
+          <a href="https://squeezemetrics.com/monitor/gex" target="_blank" class="p-2 bg-gray-900 hover:bg-gray-700 rounded border border-gray-700 transition flex justify-between items-center">
+            <span class="font-medium text-blue-300">SqueezeMetrics (GEX)</span>
+            <span class="text-[10px] text-gray-400">Ver gratis ↗</span>
+          </a>
+          <a href="https://spotgamma.com/" target="_blank" class="p-2 bg-gray-900 hover:bg-gray-700 rounded border border-gray-700 transition flex justify-between items-center">
+            <span class="font-medium text-yellow-300">SpotGamma</span>
+            <span class="text-[10px] text-gray-400">Análisis Nivel Pro ↗</span>
+          </a>
+          <a href="https://www.barchart.com/futures/options" target="_blank" class="p-2 bg-gray-900 hover:bg-gray-700 rounded border border-gray-700 transition flex justify-between items-center">
+            <span class="font-medium text-green-300">Barchart Options (GC/6E)</span>
+            <span class="text-[10px] text-gray-400">Open Interest ↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Calendario Económico Filtrado solo a USD y EUR (Afecta directamente a Oro y EURUSD) -->
+      <div class="bg-gray-800 rounded-lg p-2 flex-1 min-h-[480px] border border-gray-700">
+        <div class="text-xs text-gray-400 mb-1 px-2 font-semibold">Eventos Macro (Solo USD & EUR)</div>
         <div class="tradingview-widget-container" style="height:100%;width:100%">
           <div class="tradingview-widget-container__widget"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
@@ -84,11 +115,12 @@
             "height": "100%",
             "locale": "es",
             "importanceFilter": "0,1",
-            "currencyFilter": "USD,EUR,GBP,JPY"
+            "currencyFilter": "USD,EUR"
           }
           </script>
         </div>
       </div>
+
     </section>
   </main>
 </body>
